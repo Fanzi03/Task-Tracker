@@ -9,9 +9,13 @@ import java.util.Map;
 
 public class TaskStorage {
 
-    private static final String FILE_NAME = "tasks.ser";
+    private static String FILE_NAME = "tasks.ser";
 
-    private static void saveTasks(Map<String, Task> tasks) {
+    public static void setFileName(String name) {
+        FILE_NAME = name;
+    }
+
+    public static void saveTasks(Map<String, Task> tasks) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
             oos.writeObject(tasks);
             System.out.println("Tasks saved to " + FILE_NAME);
