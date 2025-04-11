@@ -8,7 +8,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>my-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.0.0.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
@@ -35,7 +35,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.work.MainApp</mainClass> <!-- замени на свой путь -->
+                    <mainClass>com.work.gui.MainApp</mainClass> <!-- замени на свой путь -->
                 </configuration>
             </plugin>
 

@@ -1,22 +1,17 @@
-package com.work;
+package com.work.gui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Button btn = new Button("Click Me");
-        btn.setOnAction(e -> {
-            System.out.println("Button clicked");
-        });
+        TaskView view = new TaskView();
+        new TaskController(view); // ← подключаем контроллер
 
-        StackPane root = new StackPane(btn);
-        Scene scene = new Scene(root,300,200);
+        Scene scene = new Scene(view.getRoot(),600,400);
 
         stage.setTitle("Task Tracker - JavaFX");
         stage.setScene(scene);
