@@ -24,11 +24,10 @@ public class TaskStorage {
         }
     }
 
-    @SneakyThrows
     public static Map<String, Task> loadTasks() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
             return (Map<String, Task>) ois.readObject();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error loading tasks from " + FILE_NAME + ", returning empty map");
             return new HashMap<>();
 

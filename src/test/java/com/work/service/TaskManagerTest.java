@@ -1,4 +1,4 @@
-package service;
+package com.work.service;
 
 import com.work.domain.Task;
 import com.work.service.TaskManager;
@@ -9,17 +9,22 @@ import org.junit.jupiter.api.Test;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TaskManagerTest {
-    private final String FILE_NAME = "test_tasks.ser";
+    private final String FILE_NAME = "target/test-data/test-tasks.ser";
     private TaskManager manager;
 
     @BeforeEach
-    void testSetUp(){
+    void testSetUp() throws IOException {
 
+        Path path = Path.of("target", "test-data");
+        Files.createDirectories(Path.of("target/test-data"));
         //Before Clean
         TaskStorage.setFileName(FILE_NAME);
 
