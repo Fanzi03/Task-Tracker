@@ -5,6 +5,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class TaskController {
@@ -15,6 +16,7 @@ public class TaskController {
         this.view = view;
         initListeners();
 
+        // сортировка
         SortedList<Task> sortedList = new SortedList<>(view.getFilteredList());
         view.getTable().setItems(sortedList);
 
@@ -44,20 +46,30 @@ public class TaskController {
     }
 
     private void onAdd() {
-        Task newTask = new Task(UUID.randomUUID().toString(), "New task", "Description...", false);
-        view.getTaskList().add(newTask);
+        TaskForm form = new TaskForm(null);
+        Optional<Task> result = form.showAndWait();
+        result.ifPresent(task -> {
+            task.setId(UUID.randomUUID().toString());
+            view.getTaskList().add(task);
+        });
     }
 
     private void onEdit() {
         Task selected = view.getSelectedTask();
-        if(selected != null) {
-            selected.setTitle(selected.getTitle() + " Edited");
-            view.refreshTable();
-        } else {
+        if (selected == null) {
             alert("Choose the task for edition");
+            return;
         }
-    }
 
+        TaskForm form = new TaskForm(selected);
+        Optional<Task> result = form.showAndWait();
+        result.ifPresent(edited -> {
+            selected.setTitle(edited.getTitle());
+            selected.setDescription(edited.getDescription());
+            selected.setCompleted(edited.isCompleted());
+            view.refreshTable();
+        });
+    }
     private void onDelete() {
         Task selected = view.getSelectedTask();
         if(selected != null) {
