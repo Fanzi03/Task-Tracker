@@ -1,9 +1,7 @@
 package com.work.gui;
 
 import com.work.controller.TaskController;
-import com.work.domain.Task;
 import com.work.service.TaskManager;
-import com.work.storage.TaskStorage;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -16,7 +14,6 @@ public class MainApp extends Application {
 
         // Загружаем задачи из TaskManager
         TaskManager manager = new TaskManager();
-        view.getTaskList().addAll(manager.getAllTasks());
 
         new TaskController(view, manager); // ← подключаем контроллер
 
