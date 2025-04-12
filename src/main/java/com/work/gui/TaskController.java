@@ -1,6 +1,7 @@
 package com.work.gui;
 
 import com.work.domain.Task;
+import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -13,12 +14,33 @@ public class TaskController {
     public TaskController(TaskView view) {
         this.view = view;
         initListeners();
+
+        SortedList<Task> sortedList = new SortedList<>(view.getFilteredList());
+        view.getTable().setItems(sortedList);
+
+        view.getSortBox().valueProperty().addListener((obs, oldVal, newVal) -> {
+            sortedList.setComparator((t1, t2) ->{
+                return switch (newVal){
+                    case "Title" -> t1.getTitle().compareToIgnoreCase(t2.getTitle());
+                    case "Status" -> Boolean.compare(t1.isCompleted(), t2.isCompleted());
+                    default -> 0;
+                };
+            });
+        });
     }
 
     private void initListeners() {
         view.getAddBtn().setOnAction(e -> onAdd());
         view.getEditBtn().setOnAction(e -> onEdit());
         view.getDeleteBtn().setOnAction(e -> onDelete());
+
+        view.getSearchField().textProperty().addListener((obs, oldVal, newVal) -> {
+            view.getFilteredList().setPredicate(task ->{
+                if(newVal == null || newVal.isEmpty()) return true;
+                String lowerCase = newVal.toLowerCase();
+                return task.getTitle().toLowerCase().contains(lowerCase);
+            });
+        });
     }
 
     private void onAdd() {

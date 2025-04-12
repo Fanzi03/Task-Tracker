@@ -35,7 +35,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.work.gui.MainApp</mainClass> <!-- замени на свой путь -->
+                    <mainClass>com.work.gui.MainApp</mainClass>
                 </configuration>
             </plugin>
 

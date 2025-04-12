@@ -3,6 +3,7 @@ package com.work.gui;
 import com.work.domain.Task;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -13,11 +14,12 @@ import lombok.Getter;
 @Getter
 public class TaskView {
 
-
     private final BorderPane root;
     private final TableView<Task> table;
     private final TextField searchField;
     private final ObservableList<Task> taskList;
+    private final FilteredList<Task> filteredList;
+    private final ComboBox<String> sortBox;
 
     private final Button addBtn = new Button("Add");
     private final Button editBtn = new Button("Edit");
@@ -27,8 +29,10 @@ public class TaskView {
         root = new BorderPane();
         table = new TableView<>();
         searchField = new TextField();
+        sortBox = new ComboBox<>();
         taskList = FXCollections.observableArrayList();
-
+        filteredList = new FilteredList<>(taskList, t -> true);
+        table.setItems(filteredList);
         setupTable();
         setupLayout();
     }
@@ -45,13 +49,15 @@ public class TaskView {
         statusCol.setCellFactory(tc -> new CheckBoxTableCell<>());
 
         table.getColumns().addAll(titleCol, descCol, statusCol);
-        table.setItems(taskList);
 
         table.setPlaceholder(new Label("No tasks yet"));
     }
 
     private void setupLayout() {
-        HBox topBar = new HBox(10, new Label("search"), searchField, addBtn, editBtn, deleteBtn);
+        sortBox.getItems().addAll("Title", "Status");
+        sortBox.setValue("Title");
+
+        HBox topBar = new HBox(10, new Label("search"), searchField,sortBox, addBtn, editBtn, deleteBtn);
         topBar.setPadding(new Insets(10));
 
         root.setTop(topBar);
