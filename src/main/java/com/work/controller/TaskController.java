@@ -1,6 +1,9 @@
-package com.work.gui;
+package com.work.controller;
 
 import com.work.domain.Task;
+import com.work.gui.TaskForm;
+import com.work.gui.TaskView;
+import com.work.service.TaskManager;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -11,10 +14,16 @@ import java.util.UUID;
 public class TaskController {
 
     private final TaskView view;
+    private final TaskManager manager;
 
-    public TaskController(TaskView view) {
+    public TaskController(TaskView view, TaskManager manager) {
         this.view = view;
+        this.manager = manager;
+
         initListeners();
+
+        // загружаем задачи из менеджера
+        view.getTaskList().addAll(manager.getAllTasks());
 
         // сортировка
         SortedList<Task> sortedList = new SortedList<>(view.getFilteredList());
@@ -51,7 +60,8 @@ public class TaskController {
         Optional<Task> result = form.showAndWait();
         result.ifPresent(task -> {
             task.setId(UUID.randomUUID().toString());
-            view.getTaskList().add(task);
+            manager.addTask(task);             // сохраняем
+            view.getTaskList().add(task);      // обновляем интерфейс
         });
     }
 
@@ -68,14 +78,16 @@ public class TaskController {
             selected.setTitle(edited.getTitle());
             selected.setDescription(edited.getDescription());
             selected.setCompleted(edited.isCompleted());
+            manager.updateTask(selected.getId(), selected); // сохраняем изменения
             view.refreshTable();
         });
     }
     private void onDelete() {
         Task selected = view.getSelectedTask();
-        if(selected != null) {
-            view.getTaskList().remove(selected);
-        }else{
+        if (selected != null) {
+            manager.removeTask(selected.getId());           // удаляем из хранилища
+            view.getTaskList().remove(selected);            // удаляем из UI
+        } else {
             alert("Choose the task for deletion");
         }
     }
