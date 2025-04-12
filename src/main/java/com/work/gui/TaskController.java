@@ -28,6 +28,7 @@ public class TaskController {
                     default -> 0;
                 };
             });
+            view.getTable().sort();
         });
     }
 
