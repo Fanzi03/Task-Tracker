@@ -7,10 +7,12 @@ import com.work.service.TaskManager;
 import javafx.collections.transformation.SortedList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import lombok.Getter;
 
 import java.util.Optional;
 import java.util.UUID;
 
+@Getter
 public class TaskController {
 
     private final TaskView view;
@@ -19,10 +21,6 @@ public class TaskController {
     public TaskController(TaskView view, TaskManager manager) {
         this.view = view;
         this.manager = manager;
-
-        // загружаем задачи из менеджера
-        view.getTaskList().setAll(manager.getAllTasks());
-
         initListeners();
 
         // сортировка
@@ -49,8 +47,7 @@ public class TaskController {
         view.getSearchField().textProperty().addListener((obs, oldVal, newVal) -> {
             view.getFilteredList().setPredicate(task ->{
                 if(newVal == null || newVal.isEmpty()) return true;
-                String lowerCase = newVal.toLowerCase();
-                return task.getTitle().toLowerCase().contains(lowerCase);
+                return task.getTitle().toLowerCase().contains(newVal.toLowerCase());
             });
         });
     }
@@ -66,6 +63,7 @@ public class TaskController {
 
             // обновляем UI
             view.getTaskList().setAll(manager.getAllTasks());
+            view.refreshTable();
         });
     }
 
@@ -97,6 +95,7 @@ public class TaskController {
 
             // 🔄 Обновляем UI из TaskManager
             view.getTaskList().setAll(manager.getAllTasks());
+            view.refreshTable();
         } else {
             alert("Choose the task for deletion");
         }
