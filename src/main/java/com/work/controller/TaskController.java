@@ -20,10 +20,10 @@ public class TaskController {
         this.view = view;
         this.manager = manager;
 
-        initListeners();
-
         // загружаем задачи из менеджера
-        view.getTaskList().addAll(manager.getAllTasks());
+        view.getTaskList().setAll(manager.getAllTasks());
+
+        initListeners();
 
         // сортировка
         SortedList<Task> sortedList = new SortedList<>(view.getFilteredList());
@@ -60,8 +60,12 @@ public class TaskController {
         Optional<Task> result = form.showAndWait();
         result.ifPresent(task -> {
             task.setId(UUID.randomUUID().toString());
-            manager.addTask(task);             // сохраняем
-            view.getTaskList().add(task);      // обновляем интерфейс
+
+            // добавляем в менеджер (и сохраняем)
+            manager.addTask(task);
+
+            // обновляем UI
+            view.getTaskList().setAll(manager.getAllTasks());
         });
     }
 
@@ -78,7 +82,11 @@ public class TaskController {
             selected.setTitle(edited.getTitle());
             selected.setDescription(edited.getDescription());
             selected.setCompleted(edited.isCompleted());
+
             manager.updateTask(selected.getId(), selected); // сохраняем изменения
+
+            // 🔄 Обновляем UI из TaskManager
+            view.getTaskList().setAll(manager.getAllTasks());
             view.refreshTable();
         });
     }
@@ -86,7 +94,9 @@ public class TaskController {
         Task selected = view.getSelectedTask();
         if (selected != null) {
             manager.removeTask(selected.getId());           // удаляем из хранилища
-            view.getTaskList().remove(selected);            // удаляем из UI
+
+            // 🔄 Обновляем UI из TaskManager
+            view.getTaskList().setAll(manager.getAllTasks());
         } else {
             alert("Choose the task for deletion");
         }
