@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.work.controller.TaskViewController">
+
+   <top>
+      <HBox spacing="10" padding="10">
+         <TextField fx:id="searchField" promptText="Search by title..." />
+         <ComboBox fx:id="sortBox" prefWidth="150"/>
+         <Button fx:id="addBtn" text="Add"/>
+         <Button fx:id="editBtn" text="Edit"/>
+         <Button fx:id="deleteBtn" text="Delete"/>
+      </HBox>
+   </top>
+
+   <center>
+      <TableView fx:id="table" prefHeight="400" prefWidth="600">
+         <columns>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="200"/>
+            <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="250"/>
+            <TableColumn fx:id="statusColumn" text="Completed" prefWidth="150"/>
+         </columns>
+      </TableView>
+   </center>
+
+</BorderPane>
