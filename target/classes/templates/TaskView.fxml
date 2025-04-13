@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/19"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.work.controller.TaskViewController"
+            prefWidth="800.0" prefHeight="600.0">
+
+   <top>
+      <HBox spacing="10.0" alignment="CENTER_LEFT"
+            padding="15">
+         <TextField fx:id="searchField" promptText="Search by title..." />
+         <ComboBox fx:id="sortBox" prefWidth="150.0" />
+         <Button fx:id="addBtn" text="Add" prefWidth="80.0" />
+         <Button fx:id="editBtn" text="Edit" prefWidth="80.0" />
+         <Button fx:id="deleteBtn" text="Delete" prefWidth="80.0" />
+      </HBox>
+   </top>
+
+   <center>
+      <TableView fx:id="taskTable" prefHeight="400.0" prefWidth="600.0"
+                 BorderPane.alignment="CENTER">
+         <columns>
+            <TableColumn fx:id="titleColumn" text="Title" prefWidth="200.0" />
+            <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="300.0" />
+            <TableColumn fx:id="statusColumn" text="Completed" prefWidth="100.0" />
+         </columns>
+      </TableView>
+   </center>
+
+</BorderPane>

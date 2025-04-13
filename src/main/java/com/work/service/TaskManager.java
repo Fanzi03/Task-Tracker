@@ -2,39 +2,65 @@ package com.work.service;
 
 import com.work.domain.Task;
 import com.work.storage.TaskStorage;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
 public class TaskManager {
-    private Map<String, Task> tasks;
+    private final TaskStorage storage;
+    private final FilteredList<Task> filteredTasks;
+    private final SortedList<Task> sortedTasks;
 
     public TaskManager() {
-        this.tasks = TaskStorage.loadTasks();
+        this.storage = new TaskStorage();
+        this.filteredTasks = new FilteredList<>(storage.getTasks());
+        this.sortedTasks = new SortedList<>(filteredTasks);
     }
 
-    public void addTask(Task task){
-        tasks.put(task.getId(), task);
-        TaskStorage.saveTasks(tasks);
+    public ObservableList<Task> getAllTasks() {
+        return storage.getTasks();
     }
 
-    public void removeTask(String id){
-        tasks.remove(id);
-        TaskStorage.saveTasks(tasks);
+    public FilteredList<Task> getFilteredTasks() {
+        return filteredTasks;
     }
 
-    public void updateTask(String id, Task updatedTask){
-        if(tasks.containsKey(id))
-            tasks.put(id, updatedTask);
-        TaskStorage.saveTasks(tasks);
+    public SortedList<Task> getSortedTasks() {
+        return sortedTasks;
     }
 
-    public Task getTask(String id){
-        return tasks.get(id);
+    public void addTask(String title, String description) {
+        Task task = new Task(UUID.randomUUID().toString(), title, description, false);
+        storage.addTask(task);
     }
 
-    public List<Task> getAllTasks(){
-        return new ArrayList<>(tasks.values());
+    public void updateTask(String id, Task updatedTask) {
+        storage.updateTask(id, updatedTask);
+    }
+
+    public void removeTask(String id) {
+        storage.removeTask(id);
+    }
+
+    public void setFilter(String searchText) {
+        filteredTasks.setPredicate(task -> {
+            if (searchText == null || searchText.isEmpty()) {
+                return true;
+            }
+            return task.getTitle().toLowerCase().contains(searchText.toLowerCase()) ||
+                   task.getDescription().toLowerCase().contains(searchText.toLowerCase());
+        });
+    }
+
+    public void setSort(String sortBy) {
+        sortedTasks.setComparator((t1, t2) -> {
+            return switch (sortBy) {
+                case "Title" -> t1.getTitle().compareToIgnoreCase(t2.getTitle());
+                case "Status" -> Boolean.compare(t1.isCompleted(), t2.isCompleted());
+                default -> 0;
+            };
+        });
     }
 }

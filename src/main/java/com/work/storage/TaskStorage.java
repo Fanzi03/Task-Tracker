@@ -1,36 +1,60 @@
 package com.work.storage;
 
 import com.work.domain.Task;
-import lombok.SneakyThrows;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
 
 public class TaskStorage {
+    private static final String TASKS_FILE = "tasks.ser";
+    private final ObservableList<Task> tasks;
 
-    private static String FILE_NAME = "tasks.ser";
-
-    public static void setFileName(String name) {
-        FILE_NAME = name;
+    public TaskStorage() {
+        this.tasks = FXCollections.observableArrayList();
+        loadTasks();
     }
 
-    public static void saveTasks(Map<String, Task> tasks) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            oos.writeObject(tasks);
-            System.out.println("Tasks saved to " + FILE_NAME);
-        } catch (IOException e) {
-            System.out.println("Error saving tasks to " + FILE_NAME);
+    public ObservableList<Task> getTasks() {
+        return tasks;
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        saveTasks();
+    }
+
+    public void updateTask(String id, Task updatedTask) {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i).getId().equals(id)) {
+                tasks.set(i, updatedTask);
+                saveTasks();
+                break;
+            }
         }
     }
 
-    public static Map<String, Task> loadTasks() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
-            return (Map<String, Task>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading tasks from " + FILE_NAME + ", returning empty map");
-            return new HashMap<>();
+    public void removeTask(String id) {
+        tasks.removeIf(task -> task.getId().equals(id));
+        saveTasks();
+    }
 
+    private void loadTasks() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(TASKS_FILE))) {
+            tasks.addAll((ObservableList<Task>) ois.readObject());
+        } catch (FileNotFoundException e) {
+            // Файл не существует, создадим новый при сохранении
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Failed to load tasks: " + e.getMessage());
+        }
+    }
+
+    private void saveTasks() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(TASKS_FILE))) {
+            oos.writeObject(tasks);
+        } catch (IOException e) {
+            System.err.println("Failed to save tasks: " + e.getMessage());
         }
     }
 }
